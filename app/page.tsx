@@ -1,16 +1,15 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import { useChat } from 'ai/react';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 
 export default function Page() {
-  const [sentence, setSentence] = useState('');
   const bulletPointsRef = useRef<null | HTMLDivElement>(null);
 
-  const scrollToBios = () => {
+  const scrollToResults = () => {
     if (bulletPointsRef.current !== null) {
       bulletPointsRef.current.scrollIntoView({ behavior: 'smooth' });
     }
@@ -18,20 +17,14 @@ export default function Page() {
 
   const { input, handleInputChange, handleSubmit, isLoading, messages } =
     useChat({
-      body: {
-        sentence,
-      },
-      onResponse() {
-        scrollToBios();
+      api: '/api/chat',
+      onResponse(res) {
+        scrollToResults();
+        if (res.status === 429) {
+          toast.error('You are being rate limited. Please try again later.');
+        }
       },
     });
-
-  const onSubmit = (e: any) => {
-    setSentence(input);
-    handleSubmit(e);
-  };
-
-  console.log(messages);
 
   const lastMessage = messages[messages.length - 1];
   const generatedPoints =
@@ -49,7 +42,7 @@ export default function Page() {
             10,183 bullet points generated so far.
           </p>
         </div>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit}>
           <div className="mt-10 grid grid-cols-1 max-w-xl mx-auto gap-y-4 px-4">
             <div className="col-span-full">
               <label
@@ -79,7 +72,7 @@ export default function Page() {
                   type="submit"
                   className="relative rounded-full w-full sm:w-auto px-5 py-2.5 overflow-hidden group bg-indigo-600 hover:bg-gradient-to-r hover:from-indigo-600 hover:to-indigo-400 text-white hover:ring-2 hover:ring-offset-2 hover:ring-indigo-500 transition-all ease-out duration-300"
                 >
-                  <span className="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease"></span>
+                  <span className="absolute right-0 w-8 h-32 -mt-12 transition-all duration-1000 transform translate-x-12 bg-white opacity-10 rotate-12 group-hover:-translate-x-40 ease" />
                   <span className="relative font-semibold">
                     Generate suggestions
                   </span>
@@ -120,13 +113,17 @@ export default function Page() {
                     <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
                       {generatedPoints.split('•').map((generatedSentence) => {
                         const trimmedSentence = generatedSentence.trim();
-                        if (trimmedSentence !== '')
+
+                        if (
+                          trimmedSentence !== '' &&
+                          trimmedSentence.length > 3
+                        )
                           return (
                             <div
                               className="w-full rounded-xl px-4 py-2 shadow-sm hover:bg-gray-50 transition cursor-copy border"
                               onClick={() => {
                                 navigator.clipboard.writeText(trimmedSentence);
-                                toast.success('Sentece copied to clipboard', {
+                                toast.success('Sentence copied to clipboard', {
                                   style: {
                                     fontWeight: 600,
                                   },
