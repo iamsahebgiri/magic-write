@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import localFont from 'next/font/local';
-import { Partytown } from '@builder.io/partytown/react';
+// import { Partytown } from '@builder.io/partytown/react';
 
 import '../styles/globals.css';
 // import { PHProvider } from './providers';
@@ -38,8 +38,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={fontSans.className}>
       <head>
-        <Partytown debug={false} forward={['dataLayer.push']} />
-        <script src="https://cdn.splitbee.io/sb.js" type="text/partytown" />
+        {/* <Partytown debug={false} forward={['dataLayer.push']} /> */}
+        {/* <script src="https://cdn.splitbee.io/sb.js" type="text/partytown" /> */}
+        <script async src="https://cdn.splitbee.io/sb.js"></script>
       </head>
 
       {/* <PHProvider>
