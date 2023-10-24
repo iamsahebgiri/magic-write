@@ -1,8 +1,9 @@
-import localFont from 'next/font/local';
 import { Metadata } from 'next';
+import localFont from 'next/font/local';
+import { Partytown } from '@builder.io/partytown/react';
 
 import '../styles/globals.css';
-import { PHProvider } from './providers';
+// import { PHProvider } from './providers';
 
 const fontSans = localFont({
   src: './../assets/fonts/Satoshi-Variable.woff2',
@@ -36,9 +37,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={fontSans.className}>
-      <PHProvider>
+      <head>
+        <Partytown debug={false} forward={['dataLayer.push']} />
+        <script src="https://cdn.splitbee.io/sb.js" type="text/partytown" />
+      </head>
+
+      {/* <PHProvider>
         <body>{children}</body>
-      </PHProvider>
+      </PHProvider> */}
+
+      <body>{children}</body>
     </html>
   );
 }
