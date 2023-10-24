@@ -99,44 +99,59 @@ export default function Page() {
                 toastOptions={{ duration: 2000 }}
               />
               {generatedPoints && <hr className="h-px bg-gray-500 mt-2 mb-6" />}
-              <output className="space-y-6">
+              <output>
                 {generatedPoints && (
-                  <>
+                  <div ref={bulletPointsRef} className="space-y-6">
                     <div>
-                      <h2
-                        className="text-lg font-bold text-slate-900 mx-auto"
-                        ref={bulletPointsRef}
-                      >
+                      {messages.length >= 2 &&
+                        messages[messages.length - 2].role == 'user' && (
+                          <div>
+                            <h2 className="text-lg font-bold text-slate-900">
+                              Your sentence
+                            </h2>
+                            <p className="font-medium">
+                              {messages[messages.length - 2].content}
+                            </p>
+                          </div>
+                        )}
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-bold text-slate-900 mb-4">
                         Suggested bullet points
                       </h2>
-                    </div>
-                    <div className="space-y-8 flex flex-col items-center justify-center max-w-xl mx-auto">
-                      {generatedPoints.split('•').map((generatedSentence) => {
-                        const trimmedSentence = generatedSentence.trim();
+                      <div className="space-y-6 flex flex-col items-center justify-center max-w-xl">
+                        {generatedPoints.split('•').map((generatedSentence) => {
+                          const trimmedSentence = generatedSentence.trim();
 
-                        if (
-                          trimmedSentence !== '' &&
-                          trimmedSentence.length > 3
-                        )
-                          return (
-                            <div
-                              className="w-full rounded-xl px-4 py-2 shadow-sm hover:bg-gray-50 transition cursor-copy border"
-                              onClick={() => {
-                                navigator.clipboard.writeText(trimmedSentence);
-                                toast.success('Sentence copied to clipboard', {
-                                  style: {
-                                    fontWeight: 600,
-                                  },
-                                });
-                              }}
-                              key={trimmedSentence}
-                            >
-                              <p className="font-medium">{trimmedSentence}</p>
-                            </div>
-                          );
-                      })}
+                          if (
+                            trimmedSentence !== '' &&
+                            trimmedSentence.length > 3
+                          )
+                            return (
+                              <div
+                                className="w-full rounded-xl px-4 py-2 shadow-sm hover:bg-gray-50 transition cursor-copy border"
+                                onClick={() => {
+                                  navigator.clipboard.writeText(
+                                    trimmedSentence
+                                  );
+                                  toast.success(
+                                    'Sentence copied to clipboard',
+                                    {
+                                      style: {
+                                        fontWeight: 600,
+                                      },
+                                    }
+                                  );
+                                }}
+                                key={trimmedSentence}
+                              >
+                                <p className="font-medium">{trimmedSentence}</p>
+                              </div>
+                            );
+                        })}
+                      </div>
                     </div>
-                  </>
+                  </div>
                 )}
               </output>
             </div>
